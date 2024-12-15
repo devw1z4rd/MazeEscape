@@ -24,9 +24,9 @@ function maze_game()
     fig = figure;
     axis off;
     hold on;
-    set(fig, 'Color', 'w'); % Biele pozadie
+    set(fig, 'Color', 'w'); % biele pozadie
 
-    % Zobrazenie pravidiel pred spustením
+    % Zobrazenie pravidiel
     rules_str = sprintf(['Pravidlá:\n' ...
                          '- Pozbierajte všetky bonusy v bludisku.\n' ...
                          '- Vyhnite sa monštrám: kolízia zabíja.\n' ...
@@ -41,9 +41,9 @@ function maze_game()
 
     % Vymazanie pravidiel
     delete(rules_box);
-    cla; % Очистка
+    cla; % Čistenie
 
-    % Generovanie priechodného bludiska
+    % Generovanie bludiska
     max_tries = 50; 
     for attempt = 1:max_tries
         [lvl1, start_pos, exit_pos] = generate_solvable_maze(maze_size);
@@ -59,7 +59,7 @@ function maze_game()
 
     [rows, cols] = size(lvl1);
 
-    % Nahranie obrázkov
+    % Nahrávanie obrázkov
     bg = imresize(imread('img/bg.png'), [100, 100], 'nearest');
     stena = imresize(imread('img/stena.png'), [100, 100], 'nearest');
     exit_img = imresize(imread('img/exit.png'), [100, 100], 'nearest');
@@ -76,7 +76,7 @@ function maze_game()
     axis equal;
     axis off;
 
-    % Zobrazenie bludiska
+    % Kreslenie bludiska
     for r = 1:rows
         for c = 1:cols
             x_pos = (c-1)*cell_size;
@@ -115,7 +115,9 @@ function maze_game()
 
     drawnow;
 
-    % Hlavný cyklus hry
+    % Hlavný herný cyklus
+    game_over = false;
+    win_condition = false;
     while true
         w = waitforbuttonpress;
         if w
@@ -163,13 +165,19 @@ function maze_game()
                     if score < 0
                         set(message_box, 'String', 'Chizzy zomrel na jed zlých krys. Smola...');
                         uistack(player_img, 'top');
-                        break;
+                        drawnow;
+                        pause(1); % Pauza na zobrazenie správy
+                        game_over = true;
+                        break; % Strata
                     end
                 elseif cell_val == 5
                     if total_bonuses == 0
                         set(message_box, 'String', 'Gratulujeme! Dostali ste sa z bludiska.');
                         uistack(player_img, 'top');
-                        break;
+                        drawnow;
+                        pause(1); % Pauza na zobrazenie správy
+                        win_condition = true;
+                        break; % Výhra
                     else
                         set(message_box, 'String', 'Bonus sa nezbiera!');
                     end
@@ -180,6 +188,22 @@ function maze_game()
                 drawnow;
             end
         end
+    end
+
+    % Zatvorenie starého čísla
+    close(fig);
+
+    % Vytvorenie nového tvaru na zobrazenie konečného obrázka v plnej veľkosti
+    if game_over && ~win_condition
+        lose_img = imread('img/lose.png');
+        hFig = figure('MenuBar','none','ToolBar','none');
+        imshow(lose_img, 'Border', 'tight');
+        truesize(hFig);
+    else
+        win_img = imread('img/win.png');
+        hFig = figure('MenuBar','none','ToolBar','none');
+        imshow(win_img, 'Border', 'tight');
+        truesize(hFig);
     end
 end
 
@@ -352,7 +376,7 @@ function maze = place_bonuses_and_monsters_on_path(maze, path, size_)
         for i=1:num_bonuses
             r = path_candidates(chosen_idx(i),1);
             c = path_candidates(chosen_idx(i),2);
-            maze(r,c) = 3; % бонус
+            maze(r,c) = 3; % bonus
         end
     end
 
