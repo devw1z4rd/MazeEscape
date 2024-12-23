@@ -190,7 +190,7 @@ function maze_game()
         end
     end
 
-    % Zatvorenie starého čísla
+    % Zatvorenie starého
     close(fig);
 
     % Vytvorenie nového tvaru na zobrazenie konečného obrázka v plnej veľkosti
