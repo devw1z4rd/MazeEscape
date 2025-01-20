@@ -212,7 +212,7 @@ function main
                         end
                     end
                     
-                    % Формирование списка сообщений
+                    % zoznam správ pre finálnu scénu
                     msgLines = {};
                     msgLines{end+1} = 'Vyhrali ste!';
                     msgLines{end+1} = custom_sprintf('Konečné skóre: %d = %d (skóre) + %d (časový bonus)', ...
@@ -238,7 +238,7 @@ function main
                         end
                     end
                     
-                    % Вывод результатов в Static Text через GUIDE
+                    % výstup výsledkov v statickom texte prostredníctvom GUIDE
                     update_results(handles, msgLines);
                     
                     break;
@@ -677,6 +677,6 @@ function result = custom_is_char(value)
 end
 
 function update_results(handles, msgLines)
-    fullText = custom_strjoin(msgLines, '\n');
+    fullText = custom_strjoin(msgLines);
     set(handles.result_staticText, 'String', fullText);
 end
