@@ -1,4 +1,7 @@
 function main
+    % pre GUIDE
+    h = MazeGame;
+    handles = guidata(h);
     % výber obtiažnosti
     disp('Vyberte obtiažnosť:');
     disp('1 - Ľahké (60 sekúnd, menej stien, 2 bonusy)');
@@ -209,6 +212,7 @@ function main
                         end
                     end
                     
+                    % Формирование списка сообщений
                     msgLines = {};
                     msgLines{end+1} = 'Vyhrali ste!';
                     msgLines{end+1} = custom_sprintf('Konečné skóre: %d = %d (skóre) + %d (časový bonus)', ...
@@ -234,7 +238,8 @@ function main
                         end
                     end
                     
-                    display_in_figure(msgLines);
+                    % Вывод результатов в Static Text через GUIDE
+                    update_results(handles, msgLines);
                     
                     break;
                 else
@@ -671,16 +676,7 @@ function result = custom_is_char(value)
     end
 end
 
-% výsledky v okne
-function display_in_figure(msgLines)
-    fullText = custom_strjoin(msgLines);
-    
-    f = figure('Name','Maze Game Results','NumberTitle','off',...
-        'Position',[200 200 800 800]);
-    
-    annotation('textbox',[0.05 0.05 0.9 0.9], ...
-        'String', fullText, ...
-        'Interpreter','none', ...
-        'FitBoxToText','on', ...
-        'FontSize', 12);
+function update_results(handles, msgLines)
+    fullText = custom_strjoin(msgLines, '\n');
+    set(handles.result_staticText, 'String', fullText);
 end
